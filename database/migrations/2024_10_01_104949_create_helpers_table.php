@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('helpers', function (Blueprint $table) {
-            $table->id();
-            $table->string("workArea");
+            $table->id("registrationID");
+            $table->unsignedBigInteger("work_area_id");
             $table->longText("notes")->nullable();
+
+            $table->foreign("work_area_id")->references("id")->on("work_areas");
         });
 
 

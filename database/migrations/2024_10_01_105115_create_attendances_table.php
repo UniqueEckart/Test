@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("helper_id");
-            $table->text("shiftDay");
-            $table->boolean("startedWorking")->nullable();
-            $table->boolean("checkedIn")->nullable();
+            $table->unsignedBigInteger("shift_id");
+            $table->boolean("startedWorking")->default(0);
+            $table->boolean("checkedIn")->default(0);
 
-            $table->foreign("helper_id")->references("id")->on("helpers");
+            $table->foreign("helper_id")->references("registrationID")->on("helpers");
+            $table->foreign('shift_id')->references("id")->on("shift_days");
         });
     }
 

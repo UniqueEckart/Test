@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\HelperResource\Pages;
 use App\Filament\Resources\HelperResource\RelationManagers;
 use App\Models\Helper;
+use App\Models\WorkArea;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
@@ -27,9 +28,12 @@ class HelperResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make("id"),
-                Forms\Components\TextInput::make("workArea"),
-                Forms\Components\TextInput::make("notes"),
+                Forms\Components\TextInput::make("registrationID")
+                    ->label("Helfernummer"),
+                Forms\Components\Select::make('work_area_id')
+                    ->options(WorkArea::all()->pluck("label", "id")),
+                Forms\Components\TextInput::make("notes")
+                    ->label("Notizen"),
             ]);
     }
 
@@ -37,9 +41,8 @@ class HelperResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("id")->searchable(),
-                Tables\Columns\TextColumn::make("workArea"),
-                Tables\Columns\TextColumn::make("notes"),
+                Tables\Columns\TextColumn::make("registrationID")->label("Helfernummer")->searchable(),
+                Tables\Columns\TextColumn::make("work.label")->label("Bereich"),
             ])
             ->filters([
                 //
@@ -50,9 +53,7 @@ class HelperResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 
@@ -63,7 +64,7 @@ class HelperResource extends Resource
             ->description("Notizen falls Helfer auffällig")
             ->schema([
                 TextEntry::make("notes"),
-            ])
+            ]),
         ]);
     }
 

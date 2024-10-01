@@ -10,11 +10,18 @@ class Helper extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["id", "workArea", "notes"];
+    protected $fillable = ["registrationID", "work_area_id", "notes"];
     public $timestamps = false;
+
+    protected $primaryKey = "registrationID";
 
     public function attendance(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function work(): HasMany
+    {
+        return $this->hasMany(WorkArea::class, "id", "work_area_id");
     }
 }

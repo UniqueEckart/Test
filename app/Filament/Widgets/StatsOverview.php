@@ -13,9 +13,9 @@ class StatsOverview extends BaseWidget
     {
         return [
             Stat::make("Helfer Insgesamt", Helper::all()->count()),
-            Stat::make("Helfer Freitag", Attendance::where('shiftDay', "friday")->orderBy('helper_id')->get()->count()),
-            Stat::make("Helfer Freitag", Attendance::where('shiftDay', "saturday")->orderBy('helper_id')->get()->count()),
-            Stat::make("Helfer Freitag", Attendance::where('shiftDay', "sunday")->orderBy('helper_id')->get()->count()),
+            Stat::make("Helfer Freitag", Attendance::where('shift_id', 1)->groupBy('helper_id')->get()->count()),
+            Stat::make("Helfer Freitag", Attendance::where('shift_id', 2)->groupBy('helper_id')->get()->count()),
+            Stat::make("Helfer Freitag", Attendance::where('shift_id', 3)->groupBy('helper_id')->get()->count()),
         ];
     }
 }

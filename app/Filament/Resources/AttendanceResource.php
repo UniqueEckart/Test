@@ -6,6 +6,7 @@ use App\Filament\Resources\AttendanceResource\Pages;
 use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
 use App\Models\Helper;
+use App\Models\ShiftDay;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -24,14 +25,10 @@ class AttendanceResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make("helper_id")
-                    ->options(Helper::all()->pluck("id", "id"))
+                    ->options(Helper::all()->pluck("registrationID", "registrationID"))
                     ->searchable(),
-                Forms\Components\Select::make("shiftDay")
-                    ->options([
-                        "friday" => "Freitag",
-                        "saturday" => "Samstag",
-                        "sunday" => "Sonntag",
-                    ]),
+                Forms\Components\Select::make("shift_id")
+                    ->options(ShiftDay::all()->pluck("label", "id")),
             ]);
     }
 
@@ -40,23 +37,23 @@ class AttendanceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make("helper_id")->label("Helfernummer")->searchable(),
-                Tables\Columns\TextColumn::make("shiftDay")->label("Schichttag"),
+                Tables\Columns\TextColumn::make("day.label")->label("Schichttag"),
                 Tables\Columns\CheckboxColumn::make("checkedIn")->label("Erschienen"),
                 Tables\Columns\CheckboxColumn::make("startedWorking")->label("Zu seiner Schicht"),
             ])
             ->filters([
-                Tables\Filters\Filter::make("Freitag")->query(fn (Builder $query): Builder => $query->where('shiftDay', 'friday')),
-                Tables\Filters\Filter::make("Samstag")->query(fn (Builder $query): Builder => $query->where('shiftDay', 'saturday')),
-                Tables\Filters\Filter::make("Sonntag")->query(fn (Builder $query): Builder => $query->where('shiftDay', 'sunday')),
+                Tables\Filters\Filter::make("Freitag")->query(fn (Builder $query): Builder => $query->where('shift_id', 1)),
+                Tables\Filters\Filter::make("Samstag")->query(fn (Builder $query): Builder => $query->where('shift_id', 2)),
+                Tables\Filters\Filter::make("Sonntag")->query(fn (Builder $query): Builder => $query->where('shift_id', 3)),
+                Tables\Filters\Filter::make("Nicht erschienen")->query(fn (Builder $query): Builder => $query->where('checkedIn', 0)),
+                Tables\Filters\Filter::make("Nicht zur Schicht")->query(fn (Builder $query): Builder => $query->where('startedWorking', 0)),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 
